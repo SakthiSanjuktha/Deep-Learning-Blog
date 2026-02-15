@@ -1,0 +1,40 @@
+# Install if needed:
+# pip install tensorflow pandas scikit-learn
+
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+# Sample dataset (Hour vs Energy Consumption)
+data = {
+    "hour": [1,2,3,4,5,6,7,8,9,10],
+    "energy": [120,115,110,105,130,150,170,160,155,165]
+}
+
+df = pd.DataFrame(data)
+
+X = df[["hour"]].values
+y = df["energy"].values
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Build model
+model = Sequential()
+model.add(Dense(8, activation='relu', input_shape=(1,)))
+model.add(Dense(4, activation='relu'))
+model.add(Dense(1))
+
+# Compile
+model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+
+# Train
+model.fit(X_train, y_train, epochs=50, verbose=1)
+
+# Predict
+prediction = model.predict([[11]])
+print("Predicted Energy Consumption for hour 11:", prediction[0][0])
